@@ -1,0 +1,814 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moongen: Expense Tracker &amp; Budget App for iOS</title>
+<meta name="description" content="Track expenses across wallets and currencies, scan receipts, set budgets and see where your month went. Moongen is a free expense tracker for iOS.">
+<link rel="canonical" href="https://moongen.app/">
+<meta name="theme-color" content="#191715">
+<meta name="color-scheme" content="dark">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Moongen">
+<meta property="og:url" content="https://moongen.app/">
+<meta property="og:title" content="Moongen: every expense, every wallet, one clear view">
+<meta property="og:description" content="A calm expense tracker for iOS. Multi-currency wallets, receipt scanning, budgets, recurring payments and an assistant that answers questions about your spending.">
+<meta property="og:image" content="https://moongen.app/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Moongen: expense tracker for iOS">
+<meta name="twitter:description" content="Every expense, every wallet, one clear view. Free on the App Store.">
+<meta name="twitter:image" content="https://moongen.app/og-image.png">
+<link rel="icon" type="image/png" href="assets/icon.png">
+<link rel="apple-touch-icon" href="assets/icon.png">
+<meta name="apple-itunes-app" content="app-id=6791692267">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  "name": "Moongen",
+  "url": "https://moongen.app/",
+  "operatingSystem": "iOS",
+  "applicationCategory": "FinanceApplication",
+  "description": "Expense tracker and budget app for iOS with multi-currency wallets, receipt scanning, budgets, recurring payments and spending reports.",
+  "image": "https://moongen.app/assets/icon.png",
+  "downloadUrl": "https://apps.apple.com/app/moongen/id6791692267",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    { "@type": "Question", "name": "Is Moongen free?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Moongen is free to download and has no subscriptions in the current version. A few features, such as receipt scanning, have monthly usage limits, which you can see in the app." } },
+    { "@type": "Question", "name": "Does Moongen connect to my bank?", "acceptedAnswer": { "@type": "Answer", "text": "No. You add transactions yourself, by typing, scanning a receipt or asking the assistant. Moongen never asks for bank logins." } },
+    { "@type": "Question", "name": "Can I track several currencies?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Each wallet has its own currency, and you can move money between wallets with transfers." } },
+    { "@type": "Question", "name": "Can I try it without an account?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Start in guest mode and create an account later with Apple, Google or email." } },
+    { "@type": "Question", "name": "Can I get my data out?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Export your transactions to CSV at any time." } },
+    { "@type": "Question", "name": "Is there an Android version?", "acceptedAnswer": { "@type": "Answer", "text": "Not yet as an app. On Android or a computer, you can use Moongen in the browser at moongen.app." } }
+  ]
+}
+</script>
+
+<style>
+:root {
+  color-scheme: dark;
+  --bg: #191715;
+  --surface: #25221F;
+  --fg: #F2F0ED;
+  --muted: #ADA79F;
+  --line: #383533;
+  --accent: #E0A73C;
+  --accent-ink: #29200F;
+  --accent-text: #E6B45A;
+  --accent-soft: rgba(224,167,60,.16);
+  --shadow: rgba(0,0,0,.6);
+  --phone-frame: #0E0D0C;
+  --radius-lg: 28px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+  --serif: "Noto Serif", Georgia, serif;
+  --sans: "Onest", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --wrap: 1160px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+img, svg { display: block; max-width: 100%; }
+a { color: var(--accent-text); }
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+h1, h2, h3 { font-family: var(--serif); font-weight: 600; line-height: 1.12; margin: 0; letter-spacing: -0.01em; }
+p { margin: 0; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+.muted { color: var(--muted); }
+.visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Header */
+.site-header { padding: 20px 0; }
+.site-header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.brand { display: flex; align-items: center; gap: 12px; color: var(--fg); text-decoration: none; }
+.brand img { width: 40px; height: 40px; border-radius: 11px; }
+.brand span { font-family: var(--serif); font-size: 24px; font-weight: 600; letter-spacing: -0.01em; }
+.header-nav { display: flex; align-items: center; gap: 28px; }
+.header-nav a.link { color: var(--muted); text-decoration: none; font-size: 15px; }
+.header-nav a.link:hover { color: var(--fg); }
+
+/* App Store button */
+.store {
+  display: inline-flex; align-items: center; gap: 12px;
+  background: var(--accent); color: var(--accent-ink);
+  padding: 12px 22px 12px 18px; border-radius: 14px;
+  text-decoration: none; font-weight: 600; line-height: 1.15;
+  transition: transform .15s ease, filter .15s ease;
+}
+.store:hover { filter: brightness(1.06); transform: translateY(-1px); }
+.store svg { width: 24px; height: 24px; flex: none; fill: currentColor; }
+.store small { display: block; font-size: 12px; font-weight: 500; opacity: .8; }
+.store b { display: block; font-size: 18px; font-weight: 600; }
+.store.compact { padding: 9px 16px 9px 13px; border-radius: 12px; }
+.store.compact svg { width: 18px; height: 18px; }
+.store.compact b { font-size: 15px; }
+
+/* Secondary CTA: web version */
+.web-link {
+  display: inline-flex; align-items: center; min-height: 58px; padding: 0 22px; border-radius: 14px;
+  border: 1px solid var(--line); color: var(--fg); text-decoration: none; font-weight: 600; font-size: 16px;
+  transition: border-color .15s ease;
+}
+.web-link:hover { border-color: var(--accent); }
+
+/* Hero */
+.hero { padding: 56px 0 40px; }
+.hero .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 56px; align-items: center; }
+.hero h1 { font-size: clamp(40px, 5.4vw, 68px); max-width: 15ch; }
+.hero .lede { margin-top: 24px; font-size: 20px; color: var(--muted); max-width: 34em; }
+.hero .cta-row { margin-top: 36px; display: flex; flex-wrap: wrap; align-items: center; gap: 18px 24px; }
+.hero .reassure { font-size: 15px; color: var(--muted); max-width: 22em; }
+
+/* Phone frame around real screenshots */
+.phone {
+  margin: 0;
+  justify-self: center;
+  width: min(320px, 100%);
+  background: var(--phone-frame);
+  border-radius: 46px;
+  padding: 10px;
+  box-shadow: 0 40px 80px -30px var(--shadow), 0 0 0 1px var(--line);
+}
+.phone img { width: 100%; height: auto; border-radius: 37px; }
+.phone.shot { width: min(280px, 100%); }
+.phone.hero-phone { width: 330px; box-sizing: border-box; }
+.phone.small { width: 100%; max-width: 210px; border-radius: 32px; padding: 7px; }
+.phone.small img { border-radius: 26px; }
+
+/* Section base */
+section { padding: 96px 0; }
+.section-head { max-width: 40rem; }
+.section-head h2 { font-size: clamp(32px, 4.2vw, 48px); }
+.section-head p { margin-top: 16px; font-size: 19px; color: var(--muted); }
+
+/* Fact strip under hero */
+.hero .facts-wrap { display: block; }
+.facts { list-style: none; margin: 56px 0 0; padding: 24px 0 0; border-top: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+.facts li { display: flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 500; }
+.facts svg { width: 22px; height: 22px; color: var(--accent-text); flex: none; }
+
+/* Problem */
+.problem .wrap { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, .95fr); gap: 64px; align-items: center; }
+.pains { margin-top: 40px; display: grid; gap: 24px; }
+.pains > div { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 18px; align-items: start; }
+.pains h3 { font-size: 21px; }
+.pains p { margin-top: 6px; color: var(--muted); }
+.pains .ico { width: 56px; height: 56px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-text); display: grid; place-items: center; }
+.pains .ico svg { width: 28px; height: 28px; }
+
+.converge { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.note {
+  background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-md);
+  padding: 14px 16px; display: grid; gap: 2px; font-size: 14px;
+  box-shadow: 0 18px 40px -24px var(--shadow);
+}
+.note .src { color: var(--muted); font-size: 12px; }
+.note .what { font-weight: 500; }
+.note b { font-weight: 600; font-size: 16px; }
+.note b.neg { color: #E26D5A; }
+.note.n1 { rotate: -3deg; } .note.n2 { rotate: 2deg; translate: 0 10px; }
+.note.n3 { rotate: 1.5deg; } .note.n4 { rotate: -2deg; translate: 0 8px; }
+.converge .lines { grid-column: 1 / -1; width: 100%; height: 72px; fill: none; stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 4 5; opacity: .7; }
+.total {
+  grid-column: 1 / -1; justify-self: center; width: min(360px, 100%);
+  background: var(--bg); border: 1px solid var(--accent); border-radius: 22px; padding: 22px 24px;
+  box-shadow: 0 0 0 6px var(--accent-soft), 0 30px 60px -30px var(--shadow);
+}
+.total span { font-size: 14px; color: var(--muted); }
+.total b { display: block; font-size: 34px; font-weight: 600; letter-spacing: -.01em; margin-top: 2px; }
+.total small { display: block; margin-top: 6px; font-size: 13px; color: var(--muted); }
+
+/* Alternate band */
+.alt { background: var(--surface); border-block: 1px solid var(--line); }
+.alt .visual { background: var(--bg); }
+
+/* Big features */
+.big { display: grid; gap: 120px; margin-top: 72px; }
+.big-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 64px; align-items: center; }
+.big-row.flip .big-copy { order: 2; }
+.big.solo { margin-top: 0; }
+.big-copy h3 { font-size: clamp(28px, 3.2vw, 38px); }
+.big-copy p { margin-top: 16px; color: var(--muted); font-size: 18px; max-width: 32em; }
+.big-copy ul { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+.big-copy li { display: flex; gap: 12px; align-items: baseline; color: var(--muted); }
+.big-copy li::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; translate: 0 -2px; }
+.visual {
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg);
+  padding: 40px 32px; min-height: 320px; display: grid; place-items: center;
+}
+.visual.bleed {
+  padding: 48px 32px 0; place-items: end center; overflow: hidden; min-height: 0; height: 560px;
+  background-image: radial-gradient(60% 50% at 50% 70%, var(--accent-soft), transparent 70%);
+}
+.visual.bleed .phone.shot { width: min(330px, 100%); border-radius: 46px 46px 0 0; padding-bottom: 0; }
+.visual.bleed .phone.shot img { border-radius: 37px 37px 0 0; }
+.visual.bleed .receipt-flow { grid-template-columns: minmax(0, 250px) auto minmax(0, 250px); align-items: end; }
+.visual.bleed .phone.small { max-width: 250px; border-radius: 36px 36px 0 0; padding: 8px 8px 0; }
+.visual.bleed .phone.small img { border-radius: 29px 29px 0 0; }
+.visual.bleed .arrow { align-self: center; }
+.visual.bleed.short { height: 440px; padding-inline: 20px; }
+.visual.bleed .receipt-flow { grid-template-columns: minmax(0, 210px) auto minmax(0, 260px); }
+.viewfinder { position: relative; align-self: center; padding: 18px; margin-bottom: 40px; }
+.viewfinder::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  --c: var(--accent); --l: 26px;
+  background:
+    linear-gradient(var(--c), var(--c)) top left / var(--l) 2px, linear-gradient(var(--c), var(--c)) top left / 2px var(--l),
+    linear-gradient(var(--c), var(--c)) top right / var(--l) 2px, linear-gradient(var(--c), var(--c)) top right / 2px var(--l),
+    linear-gradient(var(--c), var(--c)) bottom left / var(--l) 2px, linear-gradient(var(--c), var(--c)) bottom left / 2px var(--l),
+    linear-gradient(var(--c), var(--c)) bottom right / var(--l) 2px, linear-gradient(var(--c), var(--c)) bottom right / 2px var(--l);
+  background-repeat: no-repeat;
+}
+.paper {
+  background: #F4EFE6; color: #2A2622; rotate: -2deg; padding: 18px 16px 22px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 11px; line-height: 1.5;
+  box-shadow: 0 24px 40px -18px rgba(0,0,0,.7);
+  -webkit-mask: radial-gradient(5px at 50% 100%, #0000 98%, #000) 50% / 10px 100%;
+          mask: radial-gradient(5px at 50% 100%, #0000 98%, #000) 50% / 10px 100%;
+}
+.paper b { display: block; text-align: center; font-size: 12px; letter-spacing: .04em; }
+.paper small { display: block; text-align: center; font-size: 10px; opacity: .65; margin-bottom: 10px; }
+.paper ul { list-style: none; margin: 0; padding: 8px 0; border-block: 1px dashed rgba(42,38,34,.35); display: grid; gap: 2px; }
+.paper li, .paper p { display: flex; justify-content: space-between; gap: 10px; }
+.paper p { margin-top: 8px; font-weight: 700; font-size: 12px; }
+.scanline { position: absolute; left: 10px; right: 10px; top: 50%; height: 2px; background: var(--accent); box-shadow: 0 0 14px 3px var(--accent-soft), 0 0 4px var(--accent); }
+@media (prefers-reduced-motion: no-preference) {
+  .scanline { animation: scan 2.6s ease-in-out infinite alternate; }
+  @keyframes scan { from { top: 14%; } to { top: 86%; } }
+}
+
+/* Receipt visual */
+.receipt-flow { display: grid; grid-template-columns: minmax(0, 210px) auto minmax(0, 210px); justify-content: center; gap: 18px; align-items: center; width: 100%; }
+.arrow { color: var(--accent-text); }
+.arrow svg { width: 32px; height: 32px; }
+/* More features: bento */
+.bento { margin-top: 48px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+.cell { background: var(--bg); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 28px; display: flex; flex-direction: column; }
+.cell.wide { grid-column: span 2; display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 32px; align-items: center; }
+.cell .ico { width: 52px; height: 52px; border-radius: 50%; background: var(--accent-soft); color: var(--accent-text); display: grid; place-items: center; margin-bottom: 16px; }
+.cell .ico svg { width: 26px; height: 26px; }
+.cell h3 { font-family: var(--sans); font-size: 19px; font-weight: 600; letter-spacing: 0; }
+.cell p { margin-top: 8px; color: var(--muted); font-size: 16px; }
+.mini { margin-top: auto; padding-top: 20px; font-size: 14px; }
+.budgets { display: grid; gap: 16px; padding: 22px; background: var(--surface); border-radius: var(--radius-md); margin: 0; }
+.budgets div { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; }
+.budgets span { font-weight: 500; }
+.budgets em { font-style: normal; color: var(--muted); font-size: 13px; }
+.budgets i { grid-column: 1 / -1; grid-row: 2; height: 8px; border-radius: 99px; background: linear-gradient(90deg, var(--accent) calc(var(--v) * 100%), var(--line) 0); }
+.budgets .warn i { background: linear-gradient(90deg, #E26D5A calc(var(--v) * 100%), var(--line) 0); }
+.budgets .warn em { color: #E26D5A; }
+.recur { list-style: none; margin: 0; padding-left: 0; display: grid; gap: 8px; }
+.recur li { display: flex; justify-content: space-between; padding: 10px 14px; background: var(--surface); border-radius: var(--radius-sm); }
+.recur em { font-style: normal; color: var(--muted); }
+.recur em.pos { color: var(--accent-text); }
+.cell.tall { grid-row: span 2; }
+.cell.tall .bars { height: auto; flex: 1; min-height: 140px; }
+.csv { margin: 0; padding: 18px 20px; background: var(--surface); border-radius: var(--radius-md); display: grid; gap: 6px; font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; overflow: hidden; white-space: nowrap; }
+.csv span:first-child { color: var(--accent-text); }
+.bars { display: flex; align-items: end; gap: 10px; height: 110px; }
+.bars i { flex: 1; height: calc(var(--h) * 100%); border-radius: 6px 6px 2px 2px; background: var(--accent-soft); }
+.bars i:nth-child(4) { background: var(--accent); }
+
+/* Gallery */
+.shots {
+  list-style: none; margin: 48px auto 0; padding: 0 24px 8px; max-width: var(--wrap);
+  display: grid; grid-template-columns: repeat(3, minmax(0, 290px)); justify-content: center; gap: 48px;
+}
+.shots li:nth-child(2) { translate: 0 -40px; }
+.gallery { background-image: radial-gradient(50% 40% at 50% 65%, var(--accent-soft), transparent 70%); }
+.shots figure { margin: 0; }
+.shots img {
+  width: 100%; height: auto; border-radius: 30px;
+  border: 7px solid var(--phone-frame); box-shadow: 0 30px 60px -30px var(--shadow), 0 0 0 1px var(--line);
+}
+.shots figcaption { margin-top: 16px; font-size: 15px; color: var(--muted); text-align: center; }
+
+/* Steps */
+.steps { background: var(--surface); border-block: 1px solid var(--line); }
+.steps ol { list-style: none; margin: 56px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px; counter-reset: step; }
+.steps ol { position: relative; }
+.steps ol::before { content: ""; position: absolute; top: 24px; left: 24px; right: calc((100% - 80px) / 3 - 24px); height: 1px; background: linear-gradient(90deg, var(--accent), var(--line)); }
+.steps li { counter-increment: step; position: relative; }
+.steps li::before {
+  content: counter(step); display: grid; place-items: center;
+  width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--accent); background: var(--surface); position: relative;
+  color: var(--accent-text); font-family: var(--serif); font-size: 22px; margin-bottom: 20px;
+}
+.steps h3 { font-size: 24px; }
+.steps p { margin-top: 10px; color: var(--muted); }
+
+/* Trust */
+.trust .wrap { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, .9fr); gap: 64px; align-items: center; }
+.trust dl { margin: 40px 0 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 32px; }
+.trust dl > div { padding-left: 16px; border-left: 2px solid var(--accent); }
+.trust dt { font-weight: 600; font-size: 18px; }
+.trust dd { margin: 4px 0 0; color: var(--muted); }
+
+/* FAQ */
+.faq-list { margin-top: 48px; max-width: 48rem; border-top: 1px solid var(--line); }
+.faq-list details { border-bottom: 1px solid var(--line); }
+.faq-list summary {
+  list-style: none; cursor: pointer; padding: 22px 40px 22px 0; position: relative;
+  font-size: 19px; font-weight: 500;
+}
+.faq-list summary::-webkit-details-marker { display: none; }
+.faq-list summary::after {
+  content: ""; position: absolute; right: 8px; top: 50%; width: 12px; height: 12px;
+  border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted);
+  transform: translateY(-75%) rotate(45deg); transition: transform .2s ease;
+}
+.faq-list details[open] summary::after { transform: translateY(-25%) rotate(-135deg); }
+.faq-list details p { padding: 0 0 24px; color: var(--muted); max-width: 40em; }
+
+/* Final CTA */
+.final { text-align: center; padding: 120px 0; position: relative; overflow: hidden; background-image: radial-gradient(40% 55% at 50% 55%, var(--accent-soft), transparent 70%); }
+.final .wrap { position: relative; }
+.final img.side {
+  position: absolute; top: 90px; width: 250px; height: auto; margin: 0; border-radius: 34px;
+  border: 8px solid var(--phone-frame); box-shadow: 0 40px 80px -30px var(--shadow), 0 0 0 1px var(--line); opacity: .55;
+}
+.final img.side.left { left: max(24px, calc(50% - 640px)); rotate: -8deg; }
+.final img.side.right { right: max(24px, calc(50% - 640px)); rotate: 8deg; }
+.final img { width: 88px; height: 88px; border-radius: 22px; margin: 0 auto 32px; box-shadow: 0 24px 48px -20px var(--shadow); }
+.final h2 { font-size: clamp(36px, 5vw, 60px); max-width: 16ch; margin: 0 auto; }
+.final p { margin: 20px auto 0; color: var(--muted); font-size: 19px; max-width: 30em; }
+.final-ctas { margin-top: 36px; display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 16px; }
+
+/* Footer */
+.site-footer { border-top: 1px solid var(--line); padding: 32px 0 48px; font-size: 14px; color: var(--muted); }
+.site-footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; }
+.site-footer nav { display: flex; gap: 24px; }
+.site-footer a { color: var(--muted); }
+
+/* Hero entrance: the one orchestrated moment */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-copy > * { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  .hero-copy > :nth-child(2) { animation-delay: .08s; }
+  .hero-copy > :nth-child(3) { animation-delay: .16s; }
+  .phone { animation: rise .9s .2s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(18px); } }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .store { transition: none; }
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .hero .wrap, .big-row, .trust .wrap, .problem .wrap { grid-template-columns: minmax(0, 1fr); gap: 48px; }
+  .bento { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .final img.side { display: none; }
+  .shots li:nth-child(2) { translate: none; }
+  .big-row.flip .big-copy { order: 0; }
+  .steps ol { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .steps ol::before { display: none; }
+  .header-nav a.link { display: none; }
+  .shots {
+    grid-template-columns: none; grid-auto-flow: column; grid-auto-columns: minmax(220px, 42%);
+    overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 24px;
+  }
+  .shots li { scroll-snap-align: start; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .wrap { padding: 0 16px; }
+  section { padding: 72px 0; }
+  .hero { padding-top: 32px; }
+  .hero .lede { font-size: 18px; }
+  .steps ol, .bento, .trust dl { grid-template-columns: minmax(0, 1fr); }
+  .cell.wide { grid-column: auto; grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .cell.tall { grid-row: auto; }
+  .facts { flex-direction: column; margin-top: 40px; }
+  .visual.bleed { height: 440px; padding: 32px 16px 0; }
+  .visual.bleed .phone.shot { width: 260px; }
+  .visual.bleed .phone.shot.small { width: 100%; padding: 5px 5px 0; border-radius: 26px 26px 0 0; }
+  .visual.bleed .phone.small img { border-radius: 21px 21px 0 0; }
+  .visual.bleed.short { height: auto; }
+  .visual.bleed .receipt-flow { grid-template-columns: minmax(0, 1fr); justify-items: center; gap: 4px; }
+  .viewfinder { width: 230px; margin-bottom: 12px; }
+  .visual.bleed .phone.shot.small { width: 250px; height: 300px; overflow: hidden; }
+  .visual.bleed .receipt-flow .arrow { display: none; }
+  .big { gap: 80px; }
+  .visual { padding: 20px; min-height: 0; }
+  .receipt-flow { grid-template-columns: minmax(0, 1fr); justify-items: center; }
+  .shots { grid-auto-columns: 68%; padding: 0 16px 8px; scroll-padding: 0 16px; }
+  .arrow { justify-self: center; rotate: 90deg; }
+  .brand span { font-size: 20px; }
+}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-apple" viewBox="0 0 24 24"><path d="M16.37 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-2.99-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.89 1.15 9.14.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.51 1.25-2.58-.03-.01-2.39-.92-2.4-3.66zM14.1 5.85c.63-.77 1.06-1.83.94-2.89-.91.04-2.01.61-2.66 1.37-.58.67-1.09 1.76-.96 2.79 1.02.08 2.05-.51 2.68-1.27z"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1 12H6z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-target" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".6" fill="currentColor"/></symbol>
+  <symbol id="i-repeat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 2l3 3-3 3"/><path d="M4 11V9a4 4 0 0 1 4-4h12"/><path d="M7 22l-3-3 3-3"/><path d="M20 13v2a4 4 0 0 1-4 4H4"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5z"/><path d="M2 13l10 5 10-5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></symbol>
+</svg>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="https://moongen.app/" aria-label="Moongen home">
+      <img src="assets/icon.png" alt="" width="40" height="40">
+      <span>Moongen</span>
+    </a>
+    <nav class="header-nav" aria-label="Main">
+      <a class="link" href="#features">Features</a>
+      <a class="link" href="#privacy">Privacy</a>
+      <a class="link" href="#faq">FAQ</a>
+      <a class="store compact" href="https://apps.apple.com/app/moongen/id6791692267">
+        <svg aria-hidden="true"><use href="#i-apple"/></svg>
+        <b>Get the app</b>
+      </a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" aria-labelledby="hero-title">
+    <div class="wrap">
+      <div class="hero-copy">
+        <h1 id="hero-title">Every expense, every wallet, one clear view.</h1>
+        <p class="lede">Moongen is an expense tracker for iOS. Log a purchase in two taps, scan the receipt, and see where the month went, in every currency you use.</p>
+        <div class="cta-row">
+          <a class="store" href="https://apps.apple.com/app/moongen/id6791692267">
+            <svg aria-hidden="true"><use href="#i-apple"/></svg>
+            <span><small>Download on the</small><b>App Store</b></span>
+          </a>
+          <a class="web-link" href="https://moongen.app/">Open in browser</a>
+          <p class="reassure">Free to download. Try it as a guest, no account or bank login needed.</p>
+        </div>
+      </div>
+
+      <div class="phone hero-phone">
+<div style="position: relative; width: 310px; height: 672px; border-radius: 38px; overflow: hidden; background: #191715;">
+<div role="region" aria-label="Moongen home screen preview, scrollable" tabindex="0" style="height: 100%; overflow-y: auto; scrollbar-width: none;">
+<img src="assets/moongen-home-scroll.jpg" alt="Moongen home screen: total balance, crypto portfolio, spending summary by category, income vs expense, balance history, daily average and currency converter. Scroll to see more." width="600" height="4861" fetchpriority="high" style="display: block; width: 310px; height: auto; margin-top: 45px;">
+</div>
+<img src="assets/moongen-home-statusbar.png" alt="" style="position: absolute; top: 0; left: 0; width: 310px; pointer-events: none;">
+<img src="assets/moongen-home-tabbar.png" alt="" style="position: absolute; bottom: 0; left: 0; width: 310px; pointer-events: none;">
+</div>
+      </div>
+    </div>
+    <div class="wrap facts-wrap">
+      <ul class="facts" role="list">
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2.5"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>No bank login, ever</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="12" r="6"/><circle cx="15" cy="12" r="6"/></svg>Wallets in any currency</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg>Receipt scanning</li>
+        <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M4 20h16"/></svg>CSV export anytime</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="problem alt" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="problem-copy">
+        <div class="section-head">
+          <h2 id="problem-title">Your bank sees one account. Your month runs through all of them.</h2>
+          <p>Money lives in more than one place: a card, a savings account, cash in a drawer, a second currency from the last trip. Seeing all of it together is the hard part.</p>
+        </div>
+        <div class="pains">
+          <div>
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2.5"></rect><path d="M3 10.5h18"></path><path d="M16 15h2"></path><path d="M6.5 6V4.5A1.5 1.5 0 0 1 8 3h9"></path></svg></div>
+            <div><h3>Cash and crypto stay invisible</h3>
+            <p>Your bank never sees the cash in your pocket or the coins you hold. Your total does.</p></div>
+          </div>
+          <div>
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"></path><path d="M9 8h6"></path><path d="M9 12h6"></path><path d="M9 16h3"></path></svg></div>
+            <div><h3>Receipts nobody reads</h3>
+            <p>One dinner out is a single charge on the statement and five lines on paper.</p></div>
+          </div>
+          <div>
+            <div class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"></path><path d="M10 20.5a2 2 0 0 0 4 0"></path></svg></div>
+            <div><h3>Surprises at month end</h3>
+            <p>Subscriptions and bills land quietly, and the budget is gone before you notice.</p></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="converge" aria-hidden="true">
+        <div class="note n1"><span class="src">Main Card · USD</span><span class="what">Supermarket</span><b class="neg">−$78.40</b></div>
+        <div class="note n2"><span class="src">Cash · PLN</span><span class="what">Coffee &amp; snacks</span><b class="neg">−40.00 PLN</b></div>
+        <div class="note n3"><span class="src">BTC Wallet</span><span class="what">Bought 0.04 BTC</span><b>+0.04 BTC</b></div>
+        <div class="note n4"><span class="src">Main Card · USD</span><span class="what">Monthly transit pass</span><b class="neg">−$62.00</b></div>
+        <svg class="lines" viewBox="0 0 400 140" preserveAspectRatio="none"><path d="M40 0 C 40 80, 200 60, 200 140 M150 0 C 150 70, 200 70, 200 140 M260 0 C 260 70, 200 70, 200 140 M360 0 C 360 80, 200 60, 200 140"/></svg>
+        <div class="total">
+          <span>Total Balance</span>
+          <b>$ 22,278.89</b>
+          <small>Every wallet and currency, added up</small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" aria-labelledby="features-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="features-title">Less typing, more knowing.</h2>
+        <p>The parts of money tracking that used to take effort now take a photo, a sentence or a tap.</p>
+      </div>
+
+      <div class="big">
+        <div class="big-row">
+          <div class="big-copy">
+            <h3>Snap a receipt. Get a transaction.</h3>
+            <p>Take a photo and Moongen reads the store, date and total, then saves a draft for you to confirm. Nothing is added until you say so.</p>
+            <ul>
+              <li>Split a long receipt into line items</li>
+              <li>Bundle several transactions that match one bank charge</li>
+            </ul>
+          </div>
+          <div class="visual bleed short">
+            <div class="receipt-flow">
+              <div class="viewfinder" aria-hidden="true">
+                <div class="paper">
+                  <b>TABERNA LOS GOMEZ</b>
+                  <small>12/07/2025 · 21:14</small>
+                  <ul>
+                    <li><span>Patatas bravas</span><span>6.50</span></li>
+                    <li><span>Jamón ibérico</span><span>14.00</span></li>
+                    <li><span>Pimientos Padrón</span><span>7.50</span></li>
+                    <li><span>Sangría, jarra</span><span>11.00</span></li>
+                    <li><span>Pan con tomate</span><span>4.00</span></li>
+                  </ul>
+                  <p><span>TOTAL EUR</span><span>43.00</span></p>
+                </div>
+                <i class="scanline"></i>
+              </div>
+              <div class="arrow" aria-hidden="true"><svg><use href="#i-arrow"/></svg></div>
+              <figure class="phone shot small"><img src="assets/moongen-receipt-draft.jpg" alt="Drafts screen after scanning a receipt: Taberna Los Gomez, EUR 43, 5 items detected, Food &amp; Drinks, ready to review and save" width="460" height="1000" loading="lazy" decoding="async"></figure>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section class="alt" aria-label="Wallets and currencies">
+    <div class="wrap">
+      <div class="big solo">
+        <div class="big-row flip">
+          <div class="big-copy">
+            <h3>Every wallet, every currency, one balance.</h3>
+            <p>Keep a wallet for each card, account and cash stash, each in its own currency. Move money between them with transfers and fix a balance in one step when it drifts.</p>
+            <ul>
+              <li>Multi-currency wallets and transfers</li>
+              <li>Balance adjustments that keep history honest</li>
+              <li>Crypto holdings tracked by hand, next to everything else</li>
+            </ul>
+          </div>
+          <div class="visual bleed">
+            <figure class="phone shot"><img src="assets/moongen-multi-currency-wallets.jpg" alt="Wallets screen with a USD card, a PLN cash wallet and a manually tracked BTC wallet, each shown with its own currency" width="460" height="1000" loading="lazy" decoding="async"></figure>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section aria-label="AI assistant">
+    <div class="wrap">
+      <div class="big solo">
+        <div class="big-row">
+          <div class="big-copy">
+            <h3>Ask about your money in plain words.</h3>
+            <p>The built-in assistant answers questions about your spending and can draft a transaction from a sentence. Pick the voice you like, from a supportive coach to a strict advisor.</p>
+            <ul>
+              <li>“How much did I spend this month?”</li>
+              <li>“How much on Housing this month?”</li>
+              <li>“Add an expense” or “Scan a receipt”</li>
+            </ul>
+          </div>
+          <div class="visual bleed">
+            <figure class="phone shot"><img src="assets/moongen-ai-assistant.jpg" alt="AI assistant screen with suggested questions such as how much did I spend this month and scan a receipt" width="460" height="1000" loading="lazy" decoding="async"></figure>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="alt" aria-labelledby="more-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="more-title">And the everyday things, done well.</h2>
+      </div>
+      <div class="bento">
+        <div class="cell wide">
+          <div class="cell-copy">
+            <div class="ico"><svg aria-hidden="true"><use href="#i-target"/></svg></div>
+            <h3>Budgets that warn you early</h3>
+            <p>Set a limit per category and see how much is left before the month runs out.</p>
+          </div>
+          <div class="mini budgets" aria-hidden="true">
+            <div><span>Groceries</span><i style="--v:.72"></i><em>$360 of $500</em></div>
+            <div><span>Transport</span><i style="--v:.41"></i><em>$62 of $150</em></div>
+            <div class="warn"><span>Shopping</span><i style="--v:.94"></i><em>$282 of $300</em></div>
+          </div>
+        </div>
+        <div class="cell">
+          <div class="ico"><svg aria-hidden="true"><use href="#i-repeat"/></svg></div>
+          <h3>Recurring payments on autopilot</h3>
+          <p>Rent, subscriptions and salary can add themselves on the due date, with a notification when they do.</p>
+          <ul class="mini recur" aria-hidden="true">
+            <li><span>Rent</span><em>1st</em></li>
+            <li><span>Streaming</span><em>12th</em></li>
+            <li><span>Salary</span><em class="pos">25th</em></li>
+          </ul>
+        </div>
+        <div class="cell">
+          <div class="ico"><svg aria-hidden="true"><use href="#i-user"/></svg></div>
+          <h3>Your money personality</h3>
+          <p>Moongen reads your habits and gives you an archetype, with a card you can share.</p>
+        </div>
+        <div class="cell">
+          <div class="ico"><svg aria-hidden="true"><use href="#i-layers"/></svg></div>
+          <h3>Categories that fit your life</h3>
+          <p>Create your own categories with icons and colors, and search every transaction you've logged.</p>
+        </div>
+        <div class="cell tall">
+          <div class="ico"><svg aria-hidden="true"><use href="#i-chart"/></svg></div>
+          <h3>Reports by category</h3>
+          <p>Charts for any period show which categories grow and which ones you've tamed.</p>
+          <div class="mini bars" aria-hidden="true"><i style="--h:.45"></i><i style="--h:.7"></i><i style="--h:.35"></i><i style="--h:.9"></i><i style="--h:.55"></i><i style="--h:.62"></i></div>
+        </div>
+        <div class="cell wide">
+          <div class="cell-copy">
+            <div class="ico"><svg aria-hidden="true"><use href="#i-download"/></svg></div>
+            <h3>Export whenever you want</h3>
+            <p>Download your transactions as CSV for a spreadsheet, an accountant or a backup.</p>
+          </div>
+          <div class="mini csv" aria-hidden="true">
+            <span>date,category,wallet,amount</span>
+            <span>2026-06-05,Groceries,Main Card,-78.40</span>
+            <span>2026-06-05,Shopping,BTC Wallet,-0.015</span>
+            <span>2026-06-07,Transport,Main Card,-62.00</span>
+            <span>2026-06-08,Entertainment,Cash PLN,-40.00</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="gallery" aria-labelledby="gallery-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="gallery-title">A closer look.</h2>
+        <p>Real screens from the app.</p>
+      </div>
+    </div>
+    <ul class="shots" role="list">
+      <li><figure><img src="assets/moongen-transactions-list.jpg" alt="Transactions grouped by day across wallets, with amounts converted between currencies" width="460" height="1000" loading="lazy" decoding="async"><figcaption>Every transaction, sorted by day and wallet</figcaption></figure></li>
+      <li><figure><img src="assets/moongen-transaction-groups.jpg" alt="Transaction group bundling three purchases that match one card charge" width="460" height="1000" loading="lazy" decoding="async"><figcaption>Groups that match one bank charge</figcaption></figure></li>
+      <li><figure><img src="assets/moongen-crypto-tracking.jpg" alt="Crypto holding tracked by hand with price chart, average cost and purchase lots" width="460" height="1000" loading="lazy" decoding="async"><figcaption>Crypto holdings, tracked by hand</figcaption></figure></li>
+    </ul>
+  </section>
+
+  <section class="steps" aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="steps-title">Set up in a few minutes.</h2>
+      </div>
+      <ol>
+        <li>
+          <h3>Add your wallets</h3>
+          <p>Create one for each card, account or cash stash, in the currency it actually holds.</p>
+        </li>
+        <li>
+          <h3>Log as you go</h3>
+          <p>Tap the plus button, scan a receipt or tell the assistant. Recurring payments add themselves.</p>
+        </li>
+        <li>
+          <h3>Review the month</h3>
+          <p>Check budgets, compare categories and see what changed since last month.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="trust" id="privacy" aria-labelledby="trust-title">
+    <div class="wrap">
+      <div>
+        <div class="section-head">
+          <h2 id="trust-title">Private by default, locked when you want it.</h2>
+          <p>Moongen never asks for bank logins. You decide what goes in, and the app keeps it to you.</p>
+        </div>
+        <dl>
+          <div>
+            <dt>Face ID lock</dt>
+            <dd>Open the app with a glance. Anyone else holding your phone sees nothing.</dd>
+          </div>
+          <div>
+            <dt>Two-factor authentication</dt>
+            <dd>Protect your account with an authenticator app and backup codes.</dd>
+          </div>
+          <div>
+            <dt>Session control</dt>
+            <dd>See every device signed in to your account and sign any of them out.</dd>
+          </div>
+          <div>
+            <dt>Sign in your way</dt>
+            <dd>Use Apple, Google or email, or start as a guest and decide later.</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="visual bleed">
+        <figure class="phone shot"><img src="assets/moongen-security-settings.jpg" alt="Settings with two-factor authentication, password change, active sessions and transaction export" width="460" height="1000" loading="lazy" decoding="async"></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="alt" aria-labelledby="faq-title">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="faq-title">Questions, answered.</h2>
+      </div>
+      <div class="faq-list">
+        <details>
+          <summary>Is Moongen free?</summary>
+          <p>Yes. Moongen is free to download and has no subscriptions in the current version. A few features, such as receipt scanning, have monthly usage limits, which you can see in the app.</p>
+        </details>
+        <details>
+          <summary>Does Moongen connect to my bank?</summary>
+          <p>No. You add transactions yourself, by typing, scanning a receipt or asking the assistant. Moongen never asks for bank logins.</p>
+        </details>
+        <details>
+          <summary>Can I track several currencies?</summary>
+          <p>Yes. Each wallet has its own currency, and you can move money between wallets with transfers.</p>
+        </details>
+        <details>
+          <summary>Can I try it without an account?</summary>
+          <p>Yes. Start in guest mode and create an account later with Apple, Google or email.</p>
+        </details>
+        <details>
+          <summary>Can I get my data out?</summary>
+          <p>Yes. Export your transactions to CSV at any time.</p>
+        </details>
+        <details>
+          <summary>Is there an Android version?</summary>
+          <p>Not yet as an app. On Android or a computer, you can use Moongen in the browser at moongen.app.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="final" aria-labelledby="final-title">
+    <img class="side left" src="assets/moongen-transactions-list.jpg" alt="" width="460" height="1000" loading="lazy" decoding="async">
+    <img class="side right" src="assets/moongen-crypto-tracking.jpg" alt="" width="460" height="1000" loading="lazy" decoding="async">
+    <div class="wrap">
+      <img src="assets/icon.png" alt="Moongen app icon: a crescent moon around a gold coin" width="88" height="88" loading="lazy">
+      <h2 id="final-title">Start this month with a clear view.</h2>
+      <p>Download Moongen, add your first wallet and log today's coffee. It takes less than a minute.</p>
+      <div class="final-ctas">
+        <a class="store" href="https://apps.apple.com/app/moongen/id6791692267">
+          <svg aria-hidden="true"><use href="#i-apple"/></svg>
+          <span><small>Download on the</small><b>App Store</b></span>
+        </a>
+        <a class="web-link" href="https://moongen.app/">Open in browser</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <span>© 2026 Moongen</span>
+    <nav aria-label="Legal">
+      <a href="https://moongen.app/privacy">Privacy policy</a>
+      <a href="/terms">Terms</a>
+      <a href="mailto:hello@moongen.app">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+</body>
+</html>
