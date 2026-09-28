@@ -157,6 +157,27 @@ p { margin: 0; }
 .phone.hero-phone { width: 330px; box-sizing: border-box; }
 .phone.small { width: 100%; max-width: 210px; border-radius: 32px; padding: 7px; }
 .phone.small img { border-radius: 26px; }
+.scroll-hint {
+  position: absolute; left: 50%; bottom: 96px; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 8px;
+  padding: 8px 14px 8px 10px; border-radius: 999px;
+  background: rgba(14,13,12,.72); border: 1px solid rgba(242,240,237,.14); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  color: #F2F0ED; font: 600 13px/1 var(--sans); letter-spacing: .02em;
+  pointer-events: none; transition: opacity .4s ease;
+}
+.scroll-hint.is-hidden { opacity: 0; }
+#hero-scroll { cursor: grab; }
+#hero-scroll.is-dragging { cursor: grabbing; }
+#hero-scroll img { -webkit-user-drag: none; user-select: none; -webkit-user-select: none; }
+.scroll-hint-track { position: relative; width: 14px; height: 22px; border: 1.5px solid rgba(242,240,237,.7); border-radius: 8px; }
+.scroll-hint-track::after {
+  content: ""; position: absolute; left: 50%; top: 12px; width: 4px; height: 4px; margin-left: -2px;
+  border-radius: 50%; background: var(--accent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .scroll-hint-track::after { animation: swipe-up 1.6s cubic-bezier(.4,0,.2,1) infinite; }
+  @keyframes swipe-up { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 70% { transform: translateY(-9px); opacity: 1; } 100% { transform: translateY(-9px); opacity: 0; } }
+}
 
 /* Section base */
 section { padding: 96px 0; }
@@ -470,11 +491,12 @@ section { padding: 96px 0; }
 
       <div class="phone hero-phone">
 <div style="position: relative; width: 310px; height: 672px; border-radius: 38px; overflow: hidden; background: #191715;">
-<div role="region" aria-label="Moongen home screen preview, scrollable" tabindex="0" style="height: 100%; overflow-y: auto; scrollbar-width: none;">
-<img src="assets/moongen-home-scroll.jpg" alt="Moongen home screen: total balance, crypto portfolio, spending summary by category, income vs expense, balance history, daily average and currency converter. Scroll to see more." width="600" height="4861" fetchpriority="high" style="display: block; width: 310px; height: auto; margin-top: 45px;">
+<div id="hero-scroll" role="region" aria-label="Moongen home screen preview, scrollable" tabindex="0" style="height: 100%; overflow-y: auto; scrollbar-width: none;">
+<img src="assets/moongen-home-scroll.jpg" alt="Moongen home screen: total balance, crypto portfolio, spending summary by category, income vs expense, balance history, daily average and currency converter. Scroll to see more." width="600" height="4861" fetchpriority="high" draggable="false" style="display: block; width: 310px; height: auto; margin-top: 45px;">
 </div>
 <img src="assets/moongen-home-statusbar.png" alt="" style="position: absolute; top: 0; left: 0; width: 310px; pointer-events: none;">
 <img src="assets/moongen-home-tabbar.png" alt="" style="position: absolute; bottom: 0; left: 0; width: 310px; pointer-events: none;">
+<div class="scroll-hint" id="scroll-hint" aria-hidden="true"><span class="scroll-hint-track"></span>Scroll</div>
 </div>
       </div>
     </div>
@@ -810,5 +832,91 @@ section { padding: 96px 0; }
   </div>
 </footer>
 
+<script>
+(function () {
+  var box = document.getElementById('hero-scroll');
+  var hint = document.getElementById('scroll-hint');
+  if (!box || !hint) return;
+  var nudging = false, cancelled = false;
+
+  function stop() {
+    cancelled = true;
+    hint.classList.add('is-hidden');
+  }
+  ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function (e) {
+    box.addEventListener(e, stop, { passive: true, once: true });
+  });
+  var dragY = null, dragTop = 0, samples = [], glide = 0;
+  function stopGlide() { cancelAnimationFrame(glide); glide = 0; }
+  box.addEventListener('wheel', stopGlide, { passive: true });
+  box.addEventListener('pointerdown', function (e) {
+    if (e.pointerType !== 'mouse' || e.button !== 0) return;
+    e.preventDefault();
+    stopGlide();
+    box.focus({ preventScroll: true });
+    dragY = e.clientY; dragTop = box.scrollTop;
+    samples = [{ t: e.timeStamp, y: e.clientY }];
+    box.setPointerCapture(e.pointerId);
+    box.classList.add('is-dragging');
+  });
+  box.addEventListener('pointermove', function (e) {
+    if (dragY === null) return;
+    box.scrollTop = dragTop - (e.clientY - dragY);
+    samples.push({ t: e.timeStamp, y: e.clientY });
+    while (samples.length > 2 && e.timeStamp - samples[0].t > 100) samples.shift();
+  });
+  function endDrag(e) {
+    if (dragY === null) return;
+    dragY = null;
+    box.classList.remove('is-dragging');
+    var first = samples[0], last = samples[samples.length - 1];
+    if (e.type !== 'pointerup' || e.timeStamp - last.t > 80 || last.t === first.t) return;
+    var v = (last.y - first.y) / (last.t - first.t);
+    var prev = performance.now();
+    glide = requestAnimationFrame(function step(now) {
+      var dt = now - prev; prev = now;
+      var before = box.scrollTop;
+      box.scrollTop = before - v * dt;
+      v *= Math.pow(0.996, dt);
+      if (Math.abs(v) > 0.02 && box.scrollTop !== before) glide = requestAnimationFrame(step);
+      else glide = 0;
+    });
+  }
+  box.addEventListener('pointerup', endDrag);
+  box.addEventListener('pointercancel', endDrag);
+
+  box.addEventListener('scroll', function () {
+    if (!nudging && box.scrollTop > 20) stop();
+  }, { passive: true });
+
+  if (!window.matchMedia('(prefers-reduced-motion: no-preference)').matches || !('IntersectionObserver' in window)) return;
+
+  function tween(from, to, ms, done) {
+    var t0 = performance.now();
+    (function step(now) {
+      if (cancelled) { nudging = false; return; }
+      var k = Math.min((now - t0) / ms, 1);
+      var e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      box.scrollTop = from + (to - from) * e;
+      if (k < 1) requestAnimationFrame(step); else done();
+    })(t0);
+  }
+
+  var io = new IntersectionObserver(function (entries) {
+    if (!entries[0].isIntersecting) return;
+    io.disconnect();
+    setTimeout(function () {
+      if (cancelled || box.scrollTop > 0) return;
+      nudging = true;
+      tween(0, 260, 900, function () {
+        setTimeout(function () {
+          tween(box.scrollTop, 0, 700, function () { nudging = false; });
+        }, 350);
+      });
+    }, 1300);
+  }, { threshold: 0.7 });
+  io.observe(box);
+})();
+</script>
 </body>
 </html>
